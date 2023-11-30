@@ -1,0 +1,20 @@
+{
+    "name": "shadowinek/aoc2023",
+    "description": "Advent of Code 2023",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shadowinek\\Aoc2023\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Milan Beran",
+            "email": "milan.beran@gmail.com"
+        }
+    ]
+}
