@@ -26,7 +26,7 @@ class Puzzle01 extends AbstractPuzzle
 
     public function runPart02(): int
     {
-        $this->loadData02(true);
+        $this->loadData02();
 
         return array_sum($this->numbers);
     }
