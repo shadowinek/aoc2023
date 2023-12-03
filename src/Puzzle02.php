@@ -76,6 +76,10 @@ class Puzzle02 extends AbstractPuzzle
                         $possible = false;
                         break;
                     }
+
+                    if (!$possible) {
+                        break;
+                    }
                 }
             }
 
