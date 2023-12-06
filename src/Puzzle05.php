@@ -211,13 +211,4 @@ class Puzzle05 extends AbstractPuzzle
             }
         }
     }
-
-    private function parseNumbers(string $input): array
-    {
-        $numbers = [];
-
-        preg_match_all('/\d+/', $input, $numbers);
-
-        return $numbers[0];
-    }
 }

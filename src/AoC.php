@@ -28,11 +28,11 @@ class AoC
         $class = 'Shadowinek\\Aoc2023\\Puzzle' . $this->getNumberString($puzzle);
         $method = 'runPart' . $this->getNumberString($part);
 
-        echo 'Puzzle: ' . $this->getNumberString($puzzle) . PHP_EOL;
-        echo 'Part: ' . $this->getNumberString($part) . PHP_EOL;
-        echo 'Dataset: ' . ($real_input ? 'real' : 'test') . PHP_EOL;
+        echo 'Puzzle:   ' . $this->getNumberString($puzzle) . PHP_EOL;
+        echo 'Part:     ' . $this->getNumberString($part) . PHP_EOL;
+        echo 'Dataset:  ' . ($real_input ? 'real' : 'test') . PHP_EOL;
         echo '===============' . PHP_EOL;
-        echo 'Output: ' . (class_exists($class) ? (new $class($data))->$method() : 'This puzzle is not defined yet!') . PHP_EOL;
+        echo 'Output:   ' . (class_exists($class) ? (new $class($data))->$method() : 'This puzzle is not defined yet!') . PHP_EOL;
         echo 'Expected: ' . ($expected[$puzzle][$part][$real_input] ?? '-') . PHP_EOL;
     }
 }

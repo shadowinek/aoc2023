@@ -59,15 +59,6 @@ class Puzzle04 extends AbstractPuzzle
             return 0;
         }
 
-        return pow(2, $hits-1);
-    }
-
-    private function parseNumbers(string $input): array
-    {
-        $numbers = [];
-
-        preg_match_all('/\d+/', $input, $numbers);
-
-        return $numbers[0];
+        return pow(2, $hits - 1);
     }
 }
