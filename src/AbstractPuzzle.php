@@ -15,7 +15,7 @@ abstract class AbstractPuzzle
     {
         $numbers = [];
 
-        preg_match_all('/\d+/', $input, $numbers);
+        preg_match_all('/(-?\d+)/', $input, $numbers);
 
         return $numbers[0];
     }
