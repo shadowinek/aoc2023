@@ -235,9 +235,6 @@ class Puzzle10 extends AbstractPuzzle
                     }
                 }
             }
-
-            echo $wind . PHP_EOL;
-            echo PHP_EOL;
         }
     }
 
