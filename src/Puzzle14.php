@@ -48,12 +48,12 @@ class Puzzle14 extends AbstractPuzzle
     {
         switch ($direction) {
             case self::NORTH:
-            case self::EAST:
+            case self::WEST:
                 $search = self::ASH . self::MOVABLE_ROCK;
                 $replace = self::MOVABLE_ROCK . self::ASH;
                 break;
             case self::SOUTH:
-            case self::WEST:
+            case self::EAST:
                 $search = self::MOVABLE_ROCK . self::ASH;
                 $replace = self::ASH . self::MOVABLE_ROCK;
                 break;
@@ -113,13 +113,13 @@ class Puzzle14 extends AbstractPuzzle
         $this->shiftRocks(self::NORTH);
         $this->switchRowsAndCols();
 
-        $this->shiftRocks(self::EAST);
+        $this->shiftRocks(self::WEST);
         $this->switchRowsAndCols();
 
         $this->shiftRocks(self::SOUTH);
         $this->switchRowsAndCols();
 
-        $this->shiftRocks(self::WEST);
+        $this->shiftRocks(self::EAST);
         $this->switchRowsAndCols();
     }
 
