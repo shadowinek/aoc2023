@@ -2,9 +2,16 @@
 
 namespace Shadowinek\Aoc2023;
 
+/**
+ * Solved with the help of https://www.reddit.com/r/adventofcode/comments/18hbbxe/2023_day_12python_stepbystep_tutorial_with_bonus/
+ */
 class Puzzle12 extends AbstractPuzzle
 {
     private array $rows;
+    private const DOT = '.';
+    private const HASH = '#';
+    private const QUESTION = '?';
+    private array $cache = [];
 
     public function runPart01(): int
     {
@@ -13,27 +20,73 @@ class Puzzle12 extends AbstractPuzzle
         return $this->calculate();
     }
 
-    private function calculateValidArrangements(array $row): int
+    private function hash(string $record, int $nextGroup, array $groups): int
     {
-        $arrangements = $row['arrangements'];
+        $this_group = substr($record, 0, $nextGroup);
+        $this_group = str_replace(self::QUESTION, self::HASH, $this_group);
 
-        foreach (str_split($row['row']) as $i => $value) {
-            foreach ($arrangements as $arrangement) {
-                switch ($value) {
-                    case '#':
-                    case '.':
-                        if ($arrangement[$i] !== $value) {
-                            unset($arrangements[array_search($arrangement, $arrangements)]);
-                        }
-                        break;
-                    case '?':
-                        // do nothing
-                        break;
-                }
+        if ($this_group !== str_repeat(self::HASH, $nextGroup)) {
+            return 0;
+        }
+
+        if (strlen($record) === $nextGroup) {
+            if (count($groups) === 1) {
+                return 1;
+            } else {
+                return 0;
             }
         }
 
-        return count($arrangements);
+        if (isset($record[$nextGroup]) && ($record[$nextGroup] === self::QUESTION || $record[$nextGroup] === self::DOT)) {
+            return $this->calc(substr($record, $nextGroup + 1), array_slice($groups, 1));
+        }
+
+        return 0;
+    }
+
+    private function calc(string $record, array $groups): int
+    {
+        $key = $this->getKey($record, $groups);
+
+        if (isset($this->cache[$key])) {
+            return $this->cache[$key];
+        }
+
+        if (empty($groups)) {
+            if (!str_contains($record, self::HASH)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        if (empty($record)) {
+            return 0;
+        }
+
+        $nextCharacter = $record[0];
+        $nextGroup = $groups[0];
+
+        $out = match ($nextCharacter) {
+            self::DOT => $this->dot($record, $groups),
+            self::HASH => $this->hash($record, $nextGroup, $groups),
+            self::QUESTION => $this->dot($record, $groups) + $this->hash($record, $nextGroup, $groups),
+            default => 0,
+        };
+
+        $this->cache[$key] = $out;
+
+        return $out;
+    }
+
+    private function dot(string $record, array $groups): int
+    {
+        return $this->calc(substr($record, 1), $groups);
+    }
+
+    private function getKey(string $record, array $groups): string
+    {
+        return $record . implode('-', $groups);
     }
 
     private function calculate(): int
@@ -41,8 +94,7 @@ class Puzzle12 extends AbstractPuzzle
         $total = 0;
 
         foreach ($this->rows as $row) {
-//            echo $row['row'] . PHP_EOL;
-            $total += $this->calculateValidArrangements($row);
+            $total += $this->calc($row['string'], $row['groups']);
         }
 
         return $total;
@@ -58,110 +110,17 @@ class Puzzle12 extends AbstractPuzzle
     private function loadData(bool $multiple = false): void
     {
         foreach ($this->data as $row => $data) {
-            $explode = explode(' ', $data);
+            list($string, $groups) = explode(' ', $data);
 
             if ($multiple) {
-                $explode0 = $explode[0];
-                $explode[0] .= '?' . $explode0;
-                $explode[0] .= '?' . $explode0;
-                $explode[0] .= '?' . $explode0;
-                $explode[0] .= '?' . $explode0;
-
-                $explode1 = $explode[1];
-                $explode[1] .= ',' . $explode1;
-                $explode[1] .= ',' . $explode1;
-                $explode[1] .= ',' . $explode1;
-                $explode[1] .= ',' . $explode1;
+                $string = "$string?$string?$string?$string?$string";
+                $groups = "$groups,$groups,$groups,$groups,$groups";
             }
-
-            $length = strlen($explode[0]);
-            $groups = explode(',', $explode[1]);
-
-//            echo $explode[0] . ' ' . $explode[1] .  PHP_EOL;
 
             $this->rows[] = [
-                'length' => $length,
-                'row' => $explode[0],
-                'groups' => $groups,
-                'arrangements' => $this->generateArrangements($groups, $length),
+                'string' => $string,
+                'groups' => explode(',', $groups),
             ];
         }
-    }
-
-    private function generateArrangements(array $groups, int $length): array
-    {
-        $arrangements = [];
-        $defaultGaps = array_fill(1, count($groups) - 1, 1);
-        $defaultGaps[0] = 0;
-        $defaultGaps[] = 0;
-
-        $sumGroups = array_sum($groups);
-        $diff = $length - $sumGroups - array_sum($defaultGaps);
-
-        if ($diff === 0) {
-            $arrangements[] = $this->generateArrangement($groups, $defaultGaps);
-        } else {
-            $offsets = $this->splitNumber($diff, count($defaultGaps));
-
-            foreach ($offsets as $offset) {
-                $gaps = $defaultGaps;
-
-                for ($i=0;$i<count($offset); $i++) {
-                    $gaps[$i] += $offset[$i];
-                }
-
-                $arrangements[] = $this->generateArrangement($groups, $gaps);
-            }
-        }
-
-        return $arrangements;
-
-    }
-
-    private function splitNumber(int $number, int $parts): array
-    {
-        return $this->splitRecursive($number, $parts, []);
-    }
-
-    private function splitRecursive($number, $parts, $current): array
-    {
-        $result = [];
-
-        if ($parts == 1) {
-            $current[] = $number;
-            $result[] = $current;
-            return $result;
-        }
-
-        for ($i = 0; $i <= $number; $i++) {
-            $newCurrent = $current;
-            $newCurrent[] = $i;
-            $result = array_merge($result, $this->splitRecursive($number - $i, $parts - 1, $newCurrent));
-        }
-
-        return $result;
-    }
-
-    private function generateArrangement(array $groups, array $gaps): string
-    {
-        $string = '';
-
-        foreach ($groups as $i => $group) {
-            $string .= str_repeat('.', $gaps[$i]);
-            $string .= str_repeat('#', $group);;
-        }
-
-        $string .= str_repeat('.', end($gaps));
-
-        return $string;
-    }
-
-    private function parseRow(string $input): array
-    {
-        $matches = [];
-
-        preg_match_all('/([#?]+)/', $input, $matches);
-
-        return $matches[0];
     }
 }
