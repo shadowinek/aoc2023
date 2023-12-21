@@ -39,6 +39,7 @@ class Puzzle16 extends AbstractPuzzle
 
     private function laserShow(array $lasers): void
     {
+        /** @var Laser $laser */
         while ($laser = array_shift($lasers)) {
             if ($this->cache[$laser->getHash()] ?? false) {
                 continue;
