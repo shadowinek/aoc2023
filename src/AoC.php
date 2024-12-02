@@ -8,7 +8,8 @@ class AoC
     {
         return file(
             sprintf(
-                __DIR__ . '/../data/input_%s%s%s',
+                __DIR__ . '/../input%s/input_%s%s%s',
+                $real_input ? '' : '_test',
                 $this->getNumberString($puzzle),
                 $real_input ? '' : '_test',
                 $second_input ? '_02' : ''
@@ -23,7 +24,7 @@ class AoC
     public function execute(int $puzzle, int $part, bool $real_input, bool $second_input = false): void
     {
         $data = $this->readInput($puzzle, $real_input, $second_input);
-        $expected = include(__DIR__ . '/../data/expected.php');
+        $expected = include(__DIR__ . '/../output/expected.php');
 
         $class = 'Shadowinek\\Aoc2023\\Puzzle' . $this->getNumberString($puzzle);
         $method = 'runPart' . $this->getNumberString($part);
